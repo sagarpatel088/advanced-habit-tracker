@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>एडवांस ग्रिड हैबिट ट्रैकर 📅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        /* सिलेक्टेड आदत को हाइलाइट करने के लिए */
+        .selected-row {
+            background-color: rgba(6, 182, 212, 0.15) !important;
+            border-left: 4px solid #06b6d4;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-slate-800 p-6 rounded-2xl border border-slate-700">
+            <div>
+                <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+                    📅 HabitFlow Pro
+                </h1>
+                <p class="text-slate-400 mt-1">किसी भी आदत पर क्लिक करके उसे सिलेक्ट करें, फिर Edit या Delete करें।</p>
+            </div>
+            
+            <div class="flex gap-2">
+                <select id="month-select" class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500">
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select id="year-select" class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500">
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- एक्शन बटन्स (Add, Edit, Delete, Reorder) -->
+        <section class="bg-slate-800 p-4 rounded-2xl border border-slate-700 mb-6 flex flex-wrap gap-3 items-center justify-between">
+            <form id="habit-form" class="flex-grow flex gap-2 max-w-md">
+                <input type="text" id="habit-name" placeholder="नई आदत जोड़ें..." required 
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-cyan-500">
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> Add
+                </button>
+            </form>
+
+            <div class="flex gap-2">
+                <!-- Edit Button -->
+                <button id="btn-edit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-1 opacity-50 cursor-not-allowed" disabled>
+                    <i class="fa-solid fa-pen"></i> Edit
+                </button>
+                <!-- Delete Button -->
+                <button id="btn-delete" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-1 opacity-50 cursor-not-allowed" disabled>
+                    <i class="fa-solid fa-trash"></i> Delete
+                </button>
+                <!-- Move/Position Button -->
+                <button id="btn-reorder" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-1 opacity-50 cursor-not-allowed" disabled>
+                    <i class="fa-solid fa-arrows-up-down"></i> पोजीशन बदलें
+                </button>
+            </div>
+        </section>
+
+        <!-- Grid Table -->
+        <section class="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 overflow-hidden">
+            <div class="table-container">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900 text-slate-300 border-b border-slate-700" id="table-headers">
+                            <!-- Headers Loaded by JS -->
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-700">
+                        <!-- Content Loaded by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
