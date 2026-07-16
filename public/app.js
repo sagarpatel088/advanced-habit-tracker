@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://advanced-habit-tracker.onrender.com';
 let selectedHabitId = null; // सिलेक्टेड आदत की ID
 
 // वर्तमान महीना और साल सेट करें
