@@ -79,12 +79,11 @@
                 }
                 
                 if (isLoginMode) {
-                    // लॉगिन मोड: टोकन सेव करें और अंदर भेजें
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('userEmail', data.user.email);
                     window.location.href = 'index.html';
                 } else {
-                    // साइनअप मोड: नया अकाउंट बनते ही बैकएंड से सीधे लॉगिन रिक्वेस्ट मारेंगे
+                    // साइनअप सफल होते ही तुरंत ऑटो-लॉगिन करें
                     const loginRes = await fetch(`${API_URL}/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -97,13 +96,13 @@
                         localStorage.setItem('userEmail', loginData.user.email);
                         window.location.href = 'index.html';
                     } else {
-                        window.location.reload(); // कोई रेयर केस हुआ तो रीलोड मार दें
+                        window.location.reload();
                     }
                 }
                 
             } catch (err) {
                 errorBox.innerText = err.message;
-                errorBox.style.display = 'block';
+                errorBox.style.display = 'block'; // 🪛 यहाँ ठीक कर दिया है!
             }
         });
     </script>
