@@ -55,7 +55,7 @@ app.post('/api/auth/signup', async (req, res) => {
         if (userExists.rows.length > 0) return res.status(400).json({ error: 'यह ईमेल पहले से रजिस्टर्ड है!' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await pool.query(
+        await pool.query(
             'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email',
             [email, hashedPassword]
         );
@@ -63,7 +63,7 @@ app.post('/api/auth/signup', async (req, res) => {
         res.status(201).json({ message: 'रजिस्ट्रेशन सफल रहा!' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'सर्वर में कोई गड़बड़ी है।' });
+        res.status(500).json({ error: 'सर्वर में कोई गड़बड़ी है।' });
     }
 });
 
@@ -82,7 +82,7 @@ app.post('/api/auth/login', async (req, res) => {
         res.json({ token, user: { id: user.id, email: user.email } });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'सर्ver में कोई गड़बड़ी है।' });
+        res.status(500).json({ error: 'सर्वर में कोई गड़बड़ी है।' });
     }
 });
 
@@ -127,7 +127,7 @@ app.get('/api/habits-with-logs', authenticateToken, async (req, res) => {
     }
 });
 
-// 2. ADD HABIT (यूजर ID के साथ जोड़ें)
+// 2. ADD HABIT (यूजर ID के साथ जोड़ें)
 app.post('/api/habits', authenticateToken, async (req, res) => {
     const { name, category, daily_goal } = req.body;
     const userId = req.user.id;
@@ -226,5 +226,14 @@ app.put('/api/habits-reorder', authenticateToken, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-// server.js के बिल्कुल नीचे यह लाइन जोड़ें ताकि Vercel इसे एक्सपोर्ट कर सके
+
+// ==========================================
+// 🚀 सर्वर स्टार्ट लॉजिक (Vercel + Localhost दोनों के लिए)
+// ==========================================
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`🚀 सर्वर http://localhost:${PORT} पर चालू हो चुका है!`);
+    });
+}
+
 module.exports = app;
