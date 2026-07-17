@@ -1,5 +1,8 @@
-const API_URL = 'https://advanced-habit-tracker.onrender.com/api';
+const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
 let selectedHabitId = null; // सिलेक्टेड आदत की ID
+
+// लोकल स्टोरेज से सुरक्षित टोकन (Digital Key) प्राप्त करें
+const getToken = () => localStorage.getItem('token');
 
 // वर्तमान महीना और साल सेट करें
 const d = new Date();
@@ -31,7 +34,11 @@ async function loadTracker() {
 
     // 2. डेटाबेस से आदतें लोड करें
     try {
-        const response = await fetch(`${API_URL}/habits-with-logs?month=${month}&year=${year}`);
+        const response = await fetch(`${API_URL}/habits-with-logs?month=${month}&year=${year}`, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
+        });
         const habits = await response.json();
 
         const tableBody = document.getElementById('table-body');
@@ -65,7 +72,7 @@ async function loadTracker() {
 
             // हर दिन के लिए चेकबॉक्स
             for (let day = 1; day <= daysInMonth; day++) {
-                const isCompleted = habit.completed_days.includes(day);
+                const isCompleted = habit.completed_days ? habit.completed_days.includes(day) : false;
                 rowHTML += `
                     <td class="p-2 text-center">
                         <input type="checkbox" 
@@ -82,7 +89,7 @@ async function loadTracker() {
             tableBody.appendChild(row);
         });
 
-        // इवेंट्स जोड़ें
+        // इवेंट्स जोड़ें
         addCheckboxListeners();
         addRowSelectionListeners();
 
@@ -91,26 +98,21 @@ async function loadTracker() {
     }
 }
 
-// पंक्ति (Row) सिलेक्ट करने का बिल्कुल नया और पक्का लॉजिक
+// पंक्ति (Row) सिलेक्ट करने का लॉजिक
 function addRowSelectionListeners() {
     const rows = document.querySelectorAll('.habit-row');
     rows.forEach(row => {
         row.addEventListener('click', (e) => {
-            // अगर चेकबॉक्स पर क्लिक किया है तो रो सिलेक्ट न हो
             if (e.target.classList.contains('habit-checkbox')) return;
 
             const habitId = row.getAttribute('data-id');
 
-            // अगर पहले से यही रो सिलेक्टेड थी, तो अनसिलेक्ट करें
             if (selectedHabitId === habitId) {
                 selectedHabitId = null;
                 row.classList.remove('selected-row');
                 toggleActionButtons(false);
             } else {
-                // पुरानी सिलेक्टेड रो से क्लास हटाएं
                 rows.forEach(r => r.classList.remove('selected-row'));
-                
-                // नई रो सिलेक्ट करें
                 selectedHabitId = habitId;
                 row.classList.add('selected-row');
                 toggleActionButtons(true);
@@ -154,13 +156,16 @@ function addCheckboxListeners() {
             try {
                 const response = await fetch(`${API_URL}/toggle-habit`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`
+                    },
                     body: JSON.stringify({ habit_id: habitId, date: formattedDate, completed: isChecked })
                 });
 
                 if (!response.ok) {
                     e.target.checked = !isChecked;
-                    alert('सेव नहीं हो सका!');
+                    alert('सेव नहीं हो सका! कृपया दोबारा लॉगिन करें।');
                 }
             } catch (error) {
                 console.error(error);
@@ -170,7 +175,7 @@ function addCheckboxListeners() {
     });
 }
 
-// 1. ADD - नई आदत जोड़ने का लॉजिक
+// 1. ADD - नई आदत जोड़ने का लॉजिक
 document.getElementById('habit-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const nameInput = document.getElementById('habit-name');
@@ -181,7 +186,10 @@ document.getElementById('habit-form').addEventListener('submit', async (e) => {
     try {
         const response = await fetch(`${API_URL}/habits`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`
+            },
             body: JSON.stringify({ name: name, category: 'General', daily_goal: 1 })
         });
 
@@ -209,7 +217,10 @@ document.getElementById('btn-edit').addEventListener('click', async () => {
     try {
         const response = await fetch(`${API_URL}/habits/${selectedHabitId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`
+            },
             body: JSON.stringify({ name: newName.trim() })
         });
 
@@ -235,7 +246,10 @@ document.getElementById('btn-delete').addEventListener('click', async () => {
 
     try {
         const response = await fetch(`${API_URL}/habits/${selectedHabitId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
         });
 
         if (response.ok) {
@@ -261,7 +275,10 @@ document.getElementById('btn-reorder').addEventListener('click', async () => {
     try {
         const response = await fetch(`${API_URL}/habits-reorder`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`
+            },
             body: JSON.stringify({
                 habitId: selectedHabitId,
                 targetPosition: parseInt(targetPos)

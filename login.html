@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>लॉगिन / साइनअप - हैबिट ट्रैकर</title>
+    <!-- यहाँ हमने नई CSS फाइल लिंक कर दी -->
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h2 id="auth-title">लॉगिन करें</h2>
+        <div id="error-box" class="error-msg"></div>
+        
+        <form id="auth-form">
+            <div class="form-group">
+                <label>ईमेल एड्रेस</label>
+                <input type="email" id="email" required placeholder="example@email.com">
+            </div>
+            <div class="form-group">
+                <label>पासवर्ड</label>
+                <input type="password" id="password" required placeholder="******">
+            </div>
+            <button type="submit" id="submit-btn" class="auth-btn">प्रवेश करें</button>
+        </form>
+        
+        <a id="toggle-auth" class="toggle-link">नया अकाउंट बनाएं (Sign Up)</a>
+    </div>
+
+    <script>
+        // ... (बाकी का पुराना स्क्रिप्ट कोड बिल्कुल वैसा ही रहेगा) ...
