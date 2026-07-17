@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>लॉगिन / साइनअप - हैबिट ट्रैकर</title>
-    <!-- यहाँ हमने नई CSS फाइल लिंक कर दी -->
+    <title>HabitFlow Pro - लॉगिन / साइनअप</title>
     <link rel="stylesheet" href="auth.css">
 </head>
 <body>
     <div class="auth-container">
         <h2 id="auth-title">लॉगिन करें</h2>
+        <p id="auth-subtitle" class="auth-subtitle">आगे बढ़ने के लिए अपना अकाउंट लॉगिन करें।</p>
+        
         <div id="error-box" class="error-msg"></div>
         
         <form id="auth-form">
             <div class="form-group">
                 <label>ईमेल एड्रेस</label>
-                <input type="email" id="email" required placeholder="example@email.com">
+                <input type="email" id="email" required placeholder="name@example.com">
             </div>
             <div class="form-group">
                 <label>पासवर्ड</label>
-                <input type="password" id="password" required placeholder="******">
+                <input type="password" id="password" required placeholder="••••••••">
             </div>
             <button type="submit" id="submit-btn" class="auth-btn">प्रवेश करें</button>
         </form>
@@ -28,4 +29,83 @@
     </div>
 
     <script>
-        // ... (बाकी का पुराना स्क्रिप्ट कोड बिल्कुल वैसा ही रहेगा) ...
+        const authTitle = document.getElementById('auth-title');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        const submitBtn = document.getElementById('submit-btn');
+        const toggleAuth = document.getElementById('toggle-auth');
+        const authForm = document.getElementById('auth-form');
+        const errorBox = document.getElementById('error-box');
+
+        let isLoginMode = true;
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+
+        // लॉगिन और साइनअप मोड के बीच स्विच करना
+        toggleAuth.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            errorBox.style.display = 'none';
+            if (isLoginMode) {
+                authTitle.innerText = 'लॉगिन करें';
+                authSubtitle.innerText = 'आगे बढ़ने के लिए अपना अकाउंट लॉगिन करें।';
+                submitBtn.innerText = 'प्रवेश करें';
+                toggleAuth.innerText = 'नया अकाउंट बनाएं (Sign Up)';
+            } else {
+                authTitle.innerText = 'साइनअप करें';
+                authSubtitle.innerText = 'अपना नया अकाउंट बनाकर आदतें ट्रैक करना शुरू करें।';
+                submitBtn.innerText = 'अकाउंट बनाएं';
+                toggleAuth.innerText = 'पहले से अकाउंट है? लॉगिन करें';
+            }
+        });
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorBox.style.display = 'none';
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            const endpoint = isLoginMode ? '/auth/login' : '/auth/signup';
+            
+            try {
+                const res = await fetch(`${API_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await res.json();
+                
+                if (!res.ok) {
+                    throw new Error(data.error || 'कुछ गड़बड़ हो गई!');
+                }
+                
+                if (isLoginMode) {
+                    // लॉगिन मोड: टोकन सेव करें और अंदर भेजें
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userEmail', data.user.email);
+                    window.location.href = 'index.html';
+                } else {
+                    // साइनअप मोड: नया अकाउंट बनते ही बैकएंड से सीधे लॉगिन रिक्वेस्ट मारेंगे
+                    const loginRes = await fetch(`${API_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    const loginData = await loginRes.json();
+                    
+                    if (loginRes.ok) {
+                        localStorage.setItem('token', loginData.token);
+                        localStorage.setItem('userEmail', loginData.user.email);
+                        window.location.href = 'index.html';
+                    } else {
+                        window.location.reload(); // कोई रेयर केस हुआ तो रीलोड मार दें
+                    }
+                }
+                
+            } catch (err) {
+                errorBox.innerText = err.message;
+                errorBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
