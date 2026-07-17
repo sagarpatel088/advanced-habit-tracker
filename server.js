@@ -226,7 +226,5 @@ app.put('/api/habits-reorder', authenticateToken, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
-app.listen(PORT, () => {
-    console.log(`🚀 सर्वर http://localhost:${PORT} पर चालू हो चुका है!`);
-});
+// server.js के बिल्कुल नीचे यह लाइन जोड़ें ताकि Vercel इसे एक्सपोर्ट कर सके
+module.exports = app;
