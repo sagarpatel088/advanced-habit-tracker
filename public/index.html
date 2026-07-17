@@ -22,7 +22,26 @@
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
+
+    <!-- 🔐 सुरक्षा गेटवे: यह ऐप लोड होने से पहले ही चेक कर लेगा कि टोकन है या नहीं -->
+    <script>
+        if (!localStorage.getItem('token')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
     <div class="max-w-6xl mx-auto">
+        
+        <!-- 👤 टॉप यूजर बार और लॉगआउट बटन -->
+        <div class="flex justify-between items-center mb-4 bg-slate-800/50 px-6 py-3 rounded-xl border border-slate-700/60 text-sm">
+            <div class="flex items-center gap-2 text-slate-300">
+                <i class="fa-solid fa-circle-user text-cyan-400 text-lg"></i>
+                <span id="user-display" class="font-medium">यूजर लोड हो रहा है...</span>
+            </div>
+            <button id="logout-btn" class="bg-rose-600/20 hover:bg-rose-600 border border-rose-500/40 text-rose-300 hover:text-white font-semibold px-4 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-right-from-bracket"></i> लॉगआउट
+            </button>
+        </div>
         
         <!-- Header -->
         <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-slate-800 p-6 rounded-2xl border border-slate-700">
@@ -58,7 +77,7 @@
         <!-- एक्शन बटन्स (Add, Edit, Delete, Reorder) -->
         <section class="bg-slate-800 p-4 rounded-2xl border border-slate-700 mb-6 flex flex-wrap gap-3 items-center justify-between">
             <form id="habit-form" class="flex-grow flex gap-2 max-w-md">
-                <input type="text" id="habit-name" placeholder="नई आदत जोड़ें..." required 
+                <input type="text" id="habit-name" placeholder="नई आदत जोड़ें..." required 
                     class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-cyan-500">
                 <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-1">
                     <i class="fa-solid fa-plus"></i> Add
@@ -98,6 +117,19 @@
         </section>
 
     </div>
+
+    <!-- लॉगआउट और यूजर डिस्प्ले को चालू करने के लिए स्क्रिप्ट -->
+    <script>
+        if (localStorage.getItem('token')) {
+            document.getElementById('user-display').innerText = localStorage.getItem('userEmail');
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'login.html';
+        });
+    </script>
 
     <script src="app.js"></script>
 </body>
