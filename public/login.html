@@ -9,7 +9,7 @@
 <body>
     <div class="auth-container">
         <h2 id="auth-title">लॉगिन करें</h2>
-        <p id="auth-subtitle" class="auth-subtitle">आगे बढ़ने के लिए अपना अकाउंट लॉगिन करें।</p>
+        <p id="auth-subtitle" class="auth-subtitle">आगे बढ़ने के लिए अपना अकाउंट लॉगिन करें।</p>
         
         <div id="error-box" class="error-msg"></div>
         
@@ -37,7 +37,8 @@
         const errorBox = document.getElementById('error-box');
 
         let isLoginMode = true;
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+        // चूँकि हम vercel.json का उपयोग कर रहे हैं, URL को पूरी तरह से रिलेटिव रखें
+        const API_URL = '/api';
 
         // लॉगिन और साइनअप मोड के बीच स्विच करना
         toggleAuth.addEventListener('click', () => {
@@ -45,7 +46,7 @@
             errorBox.style.display = 'none';
             if (isLoginMode) {
                 authTitle.innerText = 'लॉगिन करें';
-                authSubtitle.innerText = 'आगे बढ़ने के लिए अपना अकाउंट लॉगिन करें।';
+                authSubtitle.innerText = 'आगे बढ़ने के लिए अपना अकाउंट लॉगिन करें।';
                 submitBtn.innerText = 'प्रवेश करें';
                 toggleAuth.innerText = 'नया अकाउंट बनाएं (Sign Up)';
             } else {
@@ -75,7 +76,7 @@
                 const data = await res.json();
                 
                 if (!res.ok) {
-                    throw new Error(data.error || 'कुछ गड़बड़ हो गई!');
+                    throw new Error(data.error || 'कुछ गड़बड़ हो गई!');
                 }
                 
                 if (isLoginMode) {
@@ -83,7 +84,7 @@
                     localStorage.setItem('userEmail', data.user.email);
                     window.location.href = 'index.html';
                 } else {
-                    // साइनअप सफल होते ही तुरंत ऑटो-लॉगिन करें
+                    // साइनअप सफल होते ही तुरंत ऑटो-लॉगिन
                     const loginRes = await fetch(`${API_URL}/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -102,7 +103,7 @@
                 
             } catch (err) {
                 errorBox.innerText = err.message;
-                errorBox.style.display = 'block'; // 🪛 यहाँ ठीक कर दिया है!
+                errorBox.style.display = 'block';
             }
         });
     </script>
