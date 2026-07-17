@@ -28,10 +28,15 @@ body {
     font-size: 28px;
     font-weight: 800;
     background: linear-gradient(to right, #22d3ee, #34d399); /* Cyan to Emerald Gradient */
+    
+    /* 🛠️ यहाँ गड़बड़ थी: इन दोनों लाइनों का साथ होना ज़रूरी है */
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    
+    /* सेफ साइड के लिए: अगर ब्राउज़र ग्रेडिएंट सपोर्ट न करे तो सफेद दिखे */
+    color: white; 
 }
-
 .auth-subtitle {
     color: #94a3b8;
     font-size: 14px;
